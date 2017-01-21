@@ -1,0 +1,9 @@
+@import 'import/_setting';
+@import 'import/_mixins';
+@import 'import/sprite';
+.icon-account{
+	.sprite(@-contact-user-big);
+	@media screen and (min-width: 768px){
+		.sprite(@-contact-user);
+	}
+}
