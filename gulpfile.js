@@ -5,16 +5,26 @@ var includer = require('gulp-htmlincluder');
 var liveraload = require('gulp-livereload');
 var spritecreator = require('gulp.spritesmith');
 var less = require('gulp-less');
+var rename = require('gulp-rename');
+
+gulp.task('move', function(){
+	gulp.src('dev/img/*.png').pipe(gulp.dest('build/img/'));
+	gulp.src('dev/img/slider/*.png').pipe(gulp.dest('build/img/slider/'));
+	gulp.src('dev/fonts/*').pipe(gulp.dest('build/fonts'));
+
+});
 
 gulp.task('sprite', function(){
 	var spriteData = gulp.src('dev/img/icons/*.png')
 		.pipe(spritecreator({
-			imgName: 'build/img/sprite.png',
-			cssName: 'dev/less/import/sprite.less',
+			imgName: '../img/sprite.png',
+			cssName: 'sprite.less',
 			cssFormat: 'less',
 			algorithm: 'binary-tree',
 			padding: 10
-		})).pipe(gulp.dest('./'));
+		}));
+		spriteData.img.pipe(rename('sprite.png')).pipe(gulp.dest('build/img/'));
+		spriteData.css.pipe(gulp.dest('dev/less/import/'));
 });
 
 gulp.task('server', function(){
@@ -41,7 +51,7 @@ gulp.task('html', function(){
 });
 
 gulp.task('default', function(){
-	gulp.start('css', 'html', 'server');
+	gulp.start('css', 'html', 'server', 'move');
 
 	gulp.watch(['dev/less/**/*.less'], function(){
 		gulp.start('css');
