@@ -1,16 +1,22 @@
 var gulp = require('gulp');
-var connect = require('gulp-connect');
-var replace = require('gulp-html-replace');
-var includer = require('gulp-htmlincluder');
-var liveraload = require('gulp-livereload');
-var spritecreator = require('gulp.spritesmith');
 var less = require('gulp-less');
+var spritecreator = require('gulp.spritesmith');
 var rename = require('gulp-rename');
+var includer = require('gulp-htmlincluder');
+var connect = require('gulp-connect');
+var liveraload = require('gulp-livereload');
+var sourcemaps = require('gulp-sourcemaps');
+var lessAutoPrefix = require('less-plugin-autoprefix');
+var lessCleanCss = require('less-plugin-clean-css');
+var autoprefixPlugin = new lessAutoPrefix({browsers: ["last 2 versions"]});
+var cleanCssPlugin = new lessCleanCss({sourceMaps: true});
+
+
 
 gulp.task('move', function(){
-	gulp.src('dev/img/*.png').pipe(gulp.dest('build/img/'));
-	gulp.src('dev/img/slider/*.png').pipe(gulp.dest('build/img/slider/'));
-	gulp.src('dev/fonts/*').pipe(gulp.dest('build/fonts'));
+	gulp.src('dev/fonts/*.*').pipe(gulp.dest('build/fonts/'));
+	gulp.src('dev/img/*.*').pipe(gulp.dest('build/img/'));
+	gulp.src('dev/js/*.js').pipe(gulp.dest('build/js/'));
 
 });
 
@@ -21,7 +27,8 @@ gulp.task('sprite', function(){
 			cssName: 'sprite.less',
 			cssFormat: 'less',
 			algorithm: 'binary-tree',
-			padding: 10
+			padding: 10,
+			cssOpts: {function: false}
 		}));
 		spriteData.img.pipe(rename('sprite.png')).pipe(gulp.dest('build/img/'));
 		spriteData.css.pipe(gulp.dest('dev/less/import/'));
@@ -34,29 +41,30 @@ gulp.task('server', function(){
 	});
 });
 gulp.task('css', function(){
-	gulp.src('dev/less/**/general.less')
-		.pipe(less())
+	gulp.src('dev/less/general.less')
+		.pipe(sourcemaps.init())
+		.pipe(less({
+			plugins: [autoprefixPlugin]
+		}))
+		.pipe(sourcemaps.write())
 		.pipe(gulp.dest('build/css/'))
 		.pipe(connect.reload());
 });
 
 gulp.task('html', function(){
-	gulp.src('dev/**/*.html')
+	gulp.src('dev/html/**/*.html')
 		.pipe(includer())
-		.pipe(replace({
-			css:'css/style.css'
-		}))
 		.pipe(gulp.dest('build/'))
 		.pipe(connect.reload());
 });
 
 gulp.task('default', function(){
-	gulp.start('css', 'html', 'server', 'move');
+	gulp.start('css', 'html', 'server', 'move', 'sprite');
 
 	gulp.watch(['dev/less/**/*.less'], function(){
 		gulp.start('css');
 	});	
-	gulp.watch(['dev/**/*.html'], function(){
+	gulp.watch(['dev/html/**/*.html'], function(){
 		gulp.start('html');
 	});
 });
