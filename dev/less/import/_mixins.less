@@ -1,8 +1,5 @@
-// счётчик сетки
-.grid-univers(@name, @count, @i: 1) when (@i <= @count){
-	.@{name}@{i}{
-		width: @i * (100% / @count);
-	}
-	.grid-univers(@name, @count, @i+1);
+.inline-block(@va:top){
+	display: inline-block;
+	vertical-align: @va;
 }
-// конец счётчика
+
