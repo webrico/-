@@ -59,7 +59,7 @@ gulp.task('html', function(){
 });
 
 gulp.task('default', function(){
-	gulp.start('css', 'html', 'server', 'move', 'sprite');
+	gulp.start('css', 'html', 'server', 'move');
 
 	gulp.watch(['dev/less/**/*.less'], function(){
 		gulp.start('css');
