@@ -61,14 +61,23 @@ gulp.task('html', function(){
 		.pipe(connect.reload());
 });
 
+gulp.task('js', function(){
+	gulp.src('dev/js/**/*.js')
+		.pipe(gulp.dest('build/js/'))
+		.pipe(connect.reload());
+});
+
 gulp.task('default', function(){
-	gulp.start('css', 'html', 'server', 'move');
+	gulp.start('css', 'html', 'server', 'move', 'js');
 
 	gulp.watch(['dev/less/**/*.less'], function(){
 		gulp.start('css');
 	});	
 	gulp.watch(['dev/html/**/*.html'], function(){
 		gulp.start('html');
+	});
+	gulp.watch(['dev/js/**/*.js'], function(){
+		gulp.start('js');
 	});
 });
 
@@ -79,7 +88,7 @@ gulp.task('default', function(){
 var settings = {
     outputStyle: 'less', /* less || scss || sass || styl */
     columns: 12, /* number of grid columns */
-    offset: "30px", /* gutter width px || % */
+    offset: "0px", /* gutter width px || % */
     container: {
         maxWidth: '1200px', /* max-width оn very large screen */
         fields: '30px' /* side fields */
@@ -98,8 +107,8 @@ var settings = {
             'fields': '15px'
         },
         xs: {
-            'width': '560px',
-            'fields': '15px'
+            'width': '320px',
+            'fields': '20px'
         }
         /* 
         We can create any quantity of break points.
